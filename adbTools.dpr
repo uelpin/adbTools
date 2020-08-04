@@ -2,7 +2,9 @@ program adbTools;
 
 uses
   Vcl.Forms,
-  uPrincipal in 'form\uPrincipal.pas' {frmPrincipal};
+  uPrincipal in 'form\uPrincipal.pas' {frmPrincipal},
+  adbToolsRN in 'rn\adbToolsRN.pas',
+  adbToolsDAO in 'dao\adbToolsDAO.pas';
 
 {$R *.res}
 

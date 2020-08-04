@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, RxSwitch,
-  Vcl.Mask;
+  Vcl.Mask, adbToolsRN;
 
 type
   TfrmPrincipal = class(TForm)
@@ -15,18 +15,26 @@ type
     btnKillServer: TButton;
     edtIP1: TEdit;
     lblIP: TLabel;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
+    rbtnOn: TRadioButton;
+    rbtnOff: TRadioButton;
     lblCmd: TLabel;
     edtIP2: TEdit;
     edtIP3: TEdit;
     edtIP4: TEdit;
-    procedure edtIP1Change(Sender: TObject);
-    procedure edtIP2Change(Sender: TObject);
-    procedure edtIP3Change(Sender: TObject);
-    procedure edtIP4Change(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure btnConectarClick(Sender: TObject);
+    procedure btnDesconectarClick(Sender: TObject);
+    procedure btnKillServerClick(Sender: TObject);
+    procedure edtIP1KeyPress(Sender: TObject; var Key: Char);
+    procedure edtIP2KeyPress(Sender: TObject; var Key: Char);
+    procedure edtIP3KeyPress(Sender: TObject; var Key: Char);
   private
-    { Private declarations }
+    adbToolsRN : TadbToolsRN;
+
+    function formarIP(ip1,ip2,ip3,ip4:string):string;
+
+    procedure Conectar;
+    procedure validarEdit(Key: Char);
   public
     { Public declarations }
   end;
@@ -38,29 +46,76 @@ implementation
 
 {$R *.dfm}
 
-procedure TfrmPrincipal.edtIP1Change(Sender: TObject);
+procedure TfrmPrincipal.btnConectarClick(Sender: TObject);
 begin
-  if length(edtIP1.Text) = 3 then
-    edtIP2.SetFocus;
+  Conectar;
+end;
+
+function TfrmPrincipal.formarIP(ip1, ip2, ip3, ip4: string): string;
+begin
+  result := (ip1 + '.' + ip2 + '.' + ip3 + '.' + ip4);
+end;
+
+procedure TfrmPrincipal.btnDesconectarClick(Sender: TObject);
+begin
+  if rbtnOn.Checked then
+    adbToolsRN.adbDesconectar(1)
+  else
+    adbToolsRN.adbDesconectar(0);
+end;
+
+procedure TfrmPrincipal.btnKillServerClick(Sender: TObject);
+begin
+  if rbtnOn.Checked then
+    adbToolsRN.adbKillServer(1)
+  else
+    adbToolsRN.adbKillServer(0);
+end;
+
+procedure TfrmPrincipal.Conectar;
+var
+  ip:string;
+begin
+  ip := formarIP(edtIP1.Text,edtIP2.Text,edtIP3.Text,edtIP4.Text);
+
+  if rbtnOn.Checked then
+    adbToolsRN.adbConectar(1,ip)
+  else
+    adbToolsRN.adbConectar(0,ip);
 
 end;
 
-procedure TfrmPrincipal.edtIP2Change(Sender: TObject);
+procedure TfrmPrincipal.edtIP1KeyPress(Sender: TObject; var Key: Char);
 begin
-  if length(edtIP2.Text) = 3 then
-    edtIP3.SetFocus;
+  validarEdit(Key);
 end;
 
-procedure TfrmPrincipal.edtIP3Change(Sender: TObject);
+procedure TfrmPrincipal.edtIP2KeyPress(Sender: TObject; var Key: Char);
 begin
-  if length(edtIP3.Text) = 3 then
-    edtIP4.SetFocus;
+  validarEdit(Key);
 end;
 
-procedure TfrmPrincipal.edtIP4Change(Sender: TObject);
+procedure TfrmPrincipal.edtIP3KeyPress(Sender: TObject; var Key: Char);
 begin
-  if length(edtIP4.Text) = 3 then
-    btnConectar.SetFocus;
+  validarEdit(Key);
+end;
+
+procedure TfrmPrincipal.FormCreate(Sender: TObject);
+begin
+  adbToolsRN := TadbToolsRN.create;
+end;
+
+procedure TfrmPrincipal.validarEdit(Key:Char);
+begin
+  if not(Key in ['0'..'9']) then
+    if not( Key = #8 )then
+    begin
+      if (Key in ['.']) then
+      begin
+        Perform(WM_NEXTDLGCTL,0,0);
+      end;
+      abort;
+    end;
 end;
 
 end.
