@@ -107,10 +107,9 @@ end;
 
 procedure TfrmPrincipal.validarEdit(Key:Char);
 begin
-  if not(Key in ['0'..'9']) then
-    if not( Key = #8 )then
+  if not(CharInSet(Key,['0'..'9',#8])) then
     begin
-      if (Key in ['.']) then
+      if(CharInSet(Key,['.'])) then
       begin
         Perform(WM_NEXTDLGCTL,0,0);
       end;
