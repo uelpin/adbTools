@@ -14,6 +14,7 @@ object frmPrincipal: TfrmPrincipal
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
+  Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
